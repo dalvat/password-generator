@@ -103,6 +103,7 @@ var upperCasedCharacters = [
 let getPasswordOptions = function(output, length, special, uppercase, lowercase, numbers, click) {
 // length requests an input from the user between 10 and 64. If the number is outside this range they are informed and asked to refresh the page and try again.
   length = prompt(`Please enter your desired password length between 10-64 characters:`);
+// Alert to tell the user if the entered a number outside the stated range.
   if (length >= 10 && length <= 64) {} else {
     alert(`The number you entered is not between 10 and 64. Please refresh the page and try again.`);
     return;
@@ -131,7 +132,12 @@ e.g. 1 2 3
 
 Click "OK" to include them.
 Click "Cancel" to exclude them.`);
-// alert to show the users the inputs they have chosen.
+// Alert to tell the user if they did not click "OK" for any of the character types.
+  if (special === false && uppercase === false && lowercase === false && numbers === false) {
+    alert(`You did not choose any character types. Please refresh the page and try again.`);
+    return;
+  };
+// Alert to show the users the inputs they have chosen.
   click = alert(`You chose the following options:
 
 Length = ${length} characters.
@@ -147,7 +153,7 @@ output = [length, special, uppercase, lowercase, numbers]
 return output;
 };
 
-// 
+// Stores the output array from the getPasswordOptions functions in a new global array.
 let userOptions = getPasswordOptions();
 
 // Defined array to store password length.
@@ -163,17 +169,17 @@ for (var j = 1; j < userOptions.length; j++) {
   if (userOptions[j] === true && j === 1) {
     userOptions[j] = "special";
   } else if (userOptions[j] === true && j === 2) {
-    userOptions[j] = "uppercase";
+    userOptions[j] = "upper";
   } else if (userOptions[j] === true && j === 3) {
-    userOptions[j] = "lowercase";
+    userOptions[j] = "lower";
   } else if (userOptions[j] === true && j === 4) {
-    userOptions[j] = "number";
+    userOptions[j] = "numeric";
   };
 };
 
-// Defined array to store only the elements from the userOptions array that are not Boolean values.
+// Defined a new array to store only the elements from the userOptions array that are non-Boolean values.
 let trueOptions = userOptions.filter(Boolean);
-// Remove first element of trueOptions array, which is the password length user input value.
+// Remove the first element of trueOptions array, which is the password length user input value. This is no longer needed.
 trueOptions.shift();
 
 // Function for getting a random element from an array
@@ -181,15 +187,28 @@ let getRandom = function(min, max) {
   return Math.floor(Math.random() * (max -min) + min);
 };
 
-for (var k = 0; k < passwordLength.length; k++) {
-  passwordLength[k] = trueOptions[getRandom(0, trueOptions.length)];
+// Function to generate password with user input.
+let generatePassword = function(password) {
+// for loop replaces each element of the passwordLength array with a random element from the trueOptions array.
+  for (var k = 0; k < passwordLength.length; k++) {
+    passwordLength[k] = trueOptions[getRandom(0, trueOptions.length)];
+  };
+// for loop replaces all elements in the passwordLength array with a random element from the corresponding character array.
+  for (l = 0; l < passwordLength.length; l++) {
+    if (passwordLength[l] === "special") {
+      passwordLength[l] = specialCharacters[getRandom(0, specialCharacters.length)]
+    } else if (passwordLength[l] === "upper") {
+      passwordLength[l] = upperCasedCharacters[getRandom(0, upperCasedCharacters.length)]
+    } else if (passwordLength[l] === "lower") {
+      passwordLength[l] = lowerCasedCharacters[getRandom(0, lowerCasedCharacters.length)]
+    } else if (passwordLength[l] === "numeric") {
+      passwordLength[l] =numericCharacters[getRandom(0,numericCharacters.length)]
+    };
+  };
+// password parameter is set to equal the passwordLength array without the commas separating each element.
+  password = passwordLength.join("");
+return password;
 };
-
-
-// Function to generate password with user input
-let generatePassword = function() {
-
-}
 
 // Get references to the #generate element
 var generateBtn = document.querySelector('#generate');
